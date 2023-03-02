@@ -14,7 +14,7 @@ export class UserController {
     static async createUser(req: Request, res: Response) {
         const { name, email, password } = req.body
 
-        
+
         if (!name || !email || !password) {
 
             return res.status(400).json('Fill all fields')
@@ -23,11 +23,11 @@ export class UserController {
 
             return res.status(400).json('Invalid Email')
 
-        } else if(password.length < 5){
+        } else if (password.length < 5) {
 
             return res.status(400).json('Password must contain more than 5 characters')
-            
-        } 
+
+        }
 
         const userExists = await userReposity.findOneBy({ email })
 
@@ -41,17 +41,17 @@ export class UserController {
 
         await userReposity.save(newUser)
 
-        const token = await jwt.sign({ id: newUser.id }, secret ?? '', { expiresIn: '8h'} )
+        const token = await jwt.sign({ id: newUser.id }, secret ?? '', { expiresIn: '8h' })
 
         return res.status(201).json({ msg: 'User Created !', token })
 
     }
 
-    static getLogin(req: Request, res: Response){
+    static getLogin(req: Request, res: Response) {
         return res.status(200).json('Page Login')
     }
 
-    static async login(req: Request, res: Response){
+    static async login(req: Request, res: Response) {
 
         const { email, password } = req.body
 
@@ -67,17 +67,17 @@ export class UserController {
         const user = await userReposity.findOneBy({ email })
 
 
-        if(!user){
+        if (!user) {
             return res.status(400).json('User or Password Invalids')
         }
 
         const checkPassword = await bcrypt.compare(password, user.password)
 
-        if(!checkPassword){
+        if (!checkPassword) {
             return res.status(400).json('User or Password Invalids')
         }
 
-        const token = await jwt.sign({ id: user.id }, secret ?? '', { expiresIn: '8h'} )
+        const token = await jwt.sign({ id: user.id }, secret ?? '', { expiresIn: '8h' })
 
         res.status(200).json({ msg: 'Logged', token })
 
