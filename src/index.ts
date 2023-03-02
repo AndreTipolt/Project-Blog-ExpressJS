@@ -22,7 +22,7 @@ app.use(express.static('public'))
 AppDataSource.initialize().then(() => {
 
     app.get('/', (req: Request, res: Response) => {
-        res.json('rt')
+        res.json('Initial Page')
     })
     app.use('/user', userRouter)
 

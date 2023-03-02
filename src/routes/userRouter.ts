@@ -6,7 +6,7 @@ const routes = express.Router()
 
 
 
-routes.get('/', UserController.getcreateUser)
+routes.get('/', UserController.getCreateUser)
 routes.post('/create', UserController.createUser)
 
 
