@@ -3,8 +3,11 @@ import { postRepository } from "../repositories/PostRepository";
 
 
 export class PostController {
-    static home(req: Request, res: Response) {
-        return res.status(200).json('Posts page')
+    static async home(req: Request, res: Response) {
+
+        const posts = await postRepository.find({ relations: { user: true } })
+        
+        return res.status(200).json(posts)
     }
 
     static async create(req: Request, res: Response) {

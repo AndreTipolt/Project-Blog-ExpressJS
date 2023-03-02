@@ -20,5 +20,5 @@ export class Comment{
 
     @ManyToOne(() => Post, post => post.comments)
     @JoinColumn({ name: 'post_id' })
-    comment: Post
+    post: Post
 }

@@ -40,11 +40,14 @@ export class UserController {
         const newUser = await userReposity.create({ name, email, password: hashPassword })
 
         await userReposity.save(newUser)
+        try {
+            
+            const token = await jwt.sign({ id: newUser.id }, secret ?? '', { expiresIn: '8h' })
+            return res.status(201).json({ msg: 'User Created !', token })
 
-        const token = await jwt.sign({ id: newUser.id }, secret ?? '', { expiresIn: '8h' })
-
-        return res.status(201).json({ msg: 'User Created !', token })
-
+        } catch (error) {
+            return res.status(500).json('Internal Server Error')
+        }
     }
 
     static getLogin(req: Request, res: Response) {

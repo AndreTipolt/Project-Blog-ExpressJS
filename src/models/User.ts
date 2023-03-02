@@ -15,7 +15,7 @@ export class User{
     @Column({ type: 'text' })
     email: string
 
-    @Column({ type: 'text' })
+    @Column({ type: 'text', select: false})
     password: string
 
     @OneToMany(() => Comment, comment => comment.user)

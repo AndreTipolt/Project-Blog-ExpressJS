@@ -17,9 +17,10 @@ export const checkAuth = async (req: Request, res: Response, next: NextFunction)
 
     const token = authorization.split(' ')[1]
 
-    const { id } = await jwt.verify(token, process.env.SECRET ?? '') as JwtPayload
-
+    
     try {
+        
+        const { id } = await jwt.verify(token, process.env.SECRET ?? '') as JwtPayload
 
         const user = await userReposity.findOneBy({ id })
         if(!user){
@@ -34,9 +35,6 @@ export const checkAuth = async (req: Request, res: Response, next: NextFunction)
         next()
 
     } catch (error) {
-        res.redirect('/user/login')
+        return res.redirect('/user/login')
     }
-
-    
-
 }
