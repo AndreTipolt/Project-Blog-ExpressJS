@@ -4,6 +4,7 @@ import { userReposity } from "../repositories/UserRepository";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
+const secret = process.env.SECRET
 export class UserController {
 
     static getCreateUser(req: Request, res: Response) {
@@ -13,10 +14,7 @@ export class UserController {
     static async createUser(req: Request, res: Response) {
         const { name, email, password } = req.body
 
-        const secret = process.env.SECRET
-
-        const userExists = await userReposity.findOneBy({ email })
-
+        
         if (!name || !email || !password) {
 
             return res.status(400).json('Fill all fields')
@@ -25,7 +23,15 @@ export class UserController {
 
             return res.status(400).json('Invalid Email')
 
-        } else if (userExists) {
+        } else if(password.length < 5){
+
+            return res.status(400).json('Password must contain more than 5 characters')
+            
+        } 
+
+        const userExists = await userReposity.findOneBy({ email })
+
+        if (userExists) {
 
             return res.status(400).json('Email already exists')
         }
@@ -39,7 +45,41 @@ export class UserController {
 
         return res.status(201).json({ msg: 'User Created !', token })
 
+    }
 
+    static getLogin(req: Request, res: Response){
+        return res.status(200).json('Page Login')
+    }
+
+    static async login(req: Request, res: Response){
+
+        const { email, password } = req.body
+
+        if (!email || !password) {
+
+            return res.status(400).json('Fill all Fields')
+
+        } else if (!email.includes('@')) {
+
+            return res.status(400).json('Invalid Email')
+        }
+
+        const user = await userReposity.findOneBy({ email })
+
+
+        if(!user){
+            return res.status(400).json('User or Password Invalids')
+        }
+
+        const checkPassword = await bcrypt.compare(password, user.password)
+
+        if(!checkPassword){
+            return res.status(400).json('User or Password Invalids')
+        }
+
+        const token = await jwt.sign({ id: user.id }, secret ?? '', { expiresIn: '8h'} )
+
+        res.status(200).json({ msg: 'Logged', token })
 
     }
 }
