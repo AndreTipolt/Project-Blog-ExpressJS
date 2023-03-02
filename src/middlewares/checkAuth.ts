@@ -19,16 +19,24 @@ export const checkAuth = async (req: Request, res: Response, next: NextFunction)
 
     const { id } = await jwt.verify(token, process.env.SECRET ?? '') as JwtPayload
 
-    let user = await userReposity.findOneBy({ id })
+    try {
 
-    if(!user){
-        return res.status(401).json('Invalid Token')
-    }
+        const user = await userReposity.findOneBy({ id })
+        if(!user){
+            return res.status(401).json('Invalid Token')
+        }
+        
+        const {password: _,...loggedUser} = user
     
-    const {password: _,...loggedUser} = user
+    
+        req.user = loggedUser
 
+        next()
 
-    req.user = loggedUser
+    } catch (error) {
+        res.redirect('/user/login')
+    }
 
-    next()
+    
+
 }

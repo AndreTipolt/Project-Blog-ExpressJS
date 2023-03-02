@@ -10,7 +10,7 @@ export class Post{
     id: number
 
     @Column({ type: 'text' })
-    tile: string
+    title: string
 
     @Column({ type: 'datetime' })
     date: Date
