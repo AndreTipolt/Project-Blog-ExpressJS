@@ -11,6 +11,8 @@ export const checkAuth = async (req: Request, res: Response, next: NextFunction)
 
     const authorization = req.headers['authorization']
 
+    console.log(req.session.id);
+
     if (!authorization) {
         return res.redirect('/user/login')
     }

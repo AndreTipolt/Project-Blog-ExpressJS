@@ -4,11 +4,13 @@ import { userReposity } from "../repositories/UserRepository";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
+import session from 'express-session';
+
 const secret = process.env.SECRET
 export class UserController {
 
     static getCreateUser(req: Request, res: Response) {
-        res.json('Preencher os dados')
+        res.render('createUser')
     }
 
     static async createUser(req: Request, res: Response) {
@@ -17,15 +19,15 @@ export class UserController {
 
         if (!name || !email || !password) {
 
-            return res.status(400).json('Fill all fields')
+            return res.status(400).render('createUser', { msg: 'Preencha todos os campos' })
 
         } else if (!email.includes('@')) {
 
-            return res.status(400).json('Invalid Email')
+            return res.status(400).render('createUser', { msg: 'Email Inválido' })
 
         } else if (password.length < 5) {
 
-            return res.status(400).json('Password must contain more than 5 characters')
+            return res.status(400).render('createUser', { msg: 'Senha muito curta' })
 
         }
 
@@ -33,7 +35,7 @@ export class UserController {
 
         if (userExists) {
 
-            return res.status(400).json('Email already exists')
+            return res.status(400).render('createUser', { msg: 'Esse email já existe' })
         }
 
         const hashPassword = await bcrypt.hash(password, 10)
@@ -43,9 +45,16 @@ export class UserController {
         try {
             
             const token = await jwt.sign({ id: newUser.id }, secret ?? '', { expiresIn: '8h' })
-            return res.status(201).json({ msg: 'User Created !', token })
+
+            // req.session.id = token
+
+            req.sessionID = token
+            
+            return res.status(201).redirect('/post')
 
         } catch (error) {
+            console.log(error);
+            
             return res.status(500).json('Internal Server Error')
         }
     }
