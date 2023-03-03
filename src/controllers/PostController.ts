@@ -5,8 +5,15 @@ import { postRepository } from "../repositories/PostRepository";
 export class PostController {
     static async home(req: Request, res: Response) {
 
-        const posts = await postRepository.find({ relations: { user: true } })
-        
+        const posts = (await postRepository.find({ relations: { user: true } }))
+            .map((post) => {
+
+                post.user.password = ''
+                return post
+            })
+
+
+
         return res.status(200).json(posts)
     }
 
@@ -19,7 +26,7 @@ export class PostController {
 
         }
         const datePost = new Date()
-        
+
         const newPost = await postRepository.create({ title, content, date: datePost, user: req.user })
 
         await postRepository.save(newPost)

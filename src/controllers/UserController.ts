@@ -69,11 +69,10 @@ export class UserController {
 
         const user = await userReposity.findOneBy({ email })
 
-
         if (!user) {
             return res.status(400).json('User or Password Invalids')
         }
-
+        
         const checkPassword = await bcrypt.compare(password, user.password)
 
         if (!checkPassword) {
@@ -82,7 +81,7 @@ export class UserController {
 
         const token = await jwt.sign({ id: user.id }, secret ?? '', { expiresIn: '8h' })
 
-        res.status(200).json({ msg: 'Logged', token })
+        return res.status(200).json({ msg: 'Logged', token })
 
     }
 }

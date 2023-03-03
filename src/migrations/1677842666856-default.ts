@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class default1677782068867 implements MigrationInterface {
-    name = 'default1677782068867'
+export class default1677842666856 implements MigrationInterface {
+    name = 'default1677842666856'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE \`user\` CHANGE \`passworda\` \`password\` text NOT NULL`);
