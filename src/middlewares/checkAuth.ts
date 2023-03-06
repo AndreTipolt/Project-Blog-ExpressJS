@@ -9,19 +9,19 @@ type JwtPayload = {
 
 export const checkAuth = async (req: Request, res: Response, next: NextFunction) => {
 
-    const authorization = req.headers['authorization']
+    const token = req.get('cookie')?.split('; ')[0].substring(6) // Token
 
-    console.log(req.session.id);
-
-    if (!authorization) {
+    console.log(token);
+    
+        
+    if (!token) {
+        console.log('balabla');
+        
         return res.redirect('/user/login')
     }
-
-    const token = authorization.split(' ')[1]
-
     
     try {
-        
+        console.log('entrou try');
         const { id } = await jwt.verify(token, process.env.SECRET ?? '') as JwtPayload
 
         const user = await userReposity.findOneBy({ id })

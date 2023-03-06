@@ -3,10 +3,14 @@ import { Request, Response } from "express";
 import { userReposity } from "../repositories/UserRepository";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import express from 'express'
 
 import session from 'express-session';
 
 const secret = process.env.SECRET
+
+
+const app = express()
 export class UserController {
 
     static getCreateUser(req: Request, res: Response) {
@@ -46,10 +50,7 @@ export class UserController {
             
             const token = await jwt.sign({ id: newUser.id }, secret ?? '', { expiresIn: '8h' })
 
-            // req.session.id = token
-
-            req.sessionID = token
-            
+            res.cookie('token', token)
             return res.status(201).redirect('/post')
 
         } catch (error) {

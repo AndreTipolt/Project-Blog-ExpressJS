@@ -1,3 +1,4 @@
+import { Session } from "express-session";
 import { User } from "../models/User";
 
 declare global {
