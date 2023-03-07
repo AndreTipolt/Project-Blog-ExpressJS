@@ -4,13 +4,11 @@ import { userReposity } from "../repositories/UserRepository";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import express from 'express'
-
-import session from 'express-session';
+import { z } from 'zod'
 
 const secret = process.env.SECRET
 
 
-const app = express()
 export class UserController {
 
     static getCreateUser(req: Request, res: Response) {
@@ -18,46 +16,62 @@ export class UserController {
     }
 
     static async createUser(req: Request, res: Response) {
-        const { name, email, password } = req.body
 
 
-        if (!name || !email || !password) {
+        const userSchema = z.object({
+            name: z.string().min(3, { message: 'O nome precisa de no mínimo 3 caracteres' }),
+            lastName: z.string().min(3),
+            email: z.string().email(),
+            password: z.string().min(5, { message: 'Senha muito curta' }),
+            birthDate: z.string(),
+            gender: z.string().max(1)
+        })
 
-            return res.status(400).render('createUser', { msg: 'Preencha todos os campos' })
+        type User = z.infer<typeof userSchema>
 
-        } else if (!email.includes('@')) {
-
-            return res.status(400).render('createUser', { msg: 'Email Inválido' })
-
-        } else if (password.length < 5) {
-
-            return res.status(400).render('createUser', { msg: 'Senha muito curta' })
-
-        }
-
-        const userExists = await userReposity.findOneBy({ email })
-
-        if (userExists) {
-
-            return res.status(400).render('createUser', { msg: 'Esse email já existe' })
-        }
-
-        const hashPassword = await bcrypt.hash(password, 10)
-        const newUser = await userReposity.create({ name, email, password: hashPassword })
-
-        await userReposity.save(newUser)
         try {
-            
-            const token = await jwt.sign({ id: newUser.id }, secret ?? '', { expiresIn: '8h' })
+            const { name, email, password, gender, birthDate, lastName } = userSchema.parse(req.body)
 
-            res.cookie('token', token)
-            return res.status(201).redirect('/post')
+            const userExists = await userReposity.findOneBy({ email })
 
-        } catch (error) {
-            console.log(error);
-            
-            return res.status(500).json('Internal Server Error')
+            if (userExists) {
+
+                return res.status(400).render('createUser', { msg: 'Esse email já existe' })
+            }
+
+            const hashPassword = await bcrypt.hash(password, 10)
+            const newUser = await userReposity.create({
+                name,
+                email,
+                password: hashPassword,
+                gender,
+                lastName,
+                birthDate
+            })
+
+            await userReposity.save(newUser)
+
+            try {
+
+                const token = await jwt.sign({ id: newUser.id }, secret ?? '', { expiresIn: '8h' })
+
+                res.cookie('token', token)
+                return res.status(201).redirect('/post')
+
+            } catch (error) {
+                console.log(error);
+
+                return res.status(500).json('Internal Server Error')
+            }
+        } catch (error: any) {
+            const messageError = error.errors[0].message
+
+            return res.render('createUser', { msg: messageError })
+
         }
+
+
+
     }
 
     static getLogin(req: Request, res: Response) {
@@ -82,7 +96,7 @@ export class UserController {
         if (!user) {
             return res.status(400).json('User or Password Invalids')
         }
-        
+
         const checkPassword = await bcrypt.compare(password, user.password)
 
         if (!checkPassword) {

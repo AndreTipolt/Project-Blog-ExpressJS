@@ -23,4 +23,14 @@ export class User{
 
     @OneToMany(() => Post, post => post.user)
     posts: Post
+
+    @Column({ type: 'text' })
+    lastName: string
+
+    @Column({ type: 'datetime' })
+    birthDate: Date
+
+    @Column({ type: 'text' })
+    gender: string
+    
 }

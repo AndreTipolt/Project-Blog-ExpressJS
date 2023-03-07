@@ -27,7 +27,6 @@ AppDataSource.initialize().then(() => {
         secret: process.env.SECRET ?? '',
         resave: false,
         saveUninitialized: true,
-        name: 'Token',
         cookie: { maxAge: 3000000 }
       }))
     app.use('/user', userRouter)

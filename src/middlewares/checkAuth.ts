@@ -9,24 +9,22 @@ type JwtPayload = {
 
 export const checkAuth = async (req: Request, res: Response, next: NextFunction) => {
 
-    const token = req.get('cookie')?.split('; ')[0].substring(6) // Token
+    const cokkies = req.get('cookie')?.split('; ')
 
-    console.log(token);
-    
+    const token = cokkies?.reduce((anterior: string, atual: string) => atual.includes('token') ? atual : anterior).substring(6)    
         
     if (!token) {
-        console.log('balabla');
         
         return res.redirect('/user/login')
     }
     
     try {
-        console.log('entrou try');
+        
         const { id } = await jwt.verify(token, process.env.SECRET ?? '') as JwtPayload
 
         const user = await userReposity.findOneBy({ id })
         if(!user){
-            return res.status(401).json('Invalid Token')
+            return res.redirect('/user/login')
         }
         
         const {password: _,...loggedUser} = user
