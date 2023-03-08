@@ -29,14 +29,31 @@ export class UserController {
 
         type User = z.infer<typeof userSchema>
 
+        const { name, email, gender, birthDate, lastName } = req.body
+
+        let feminine;
+        
+        const masculine = gender === 'm' ? true : feminine = true 
+        
+        var userReq = {
+            name,
+            email,
+            gender,
+            birthDate,
+            lastName,
+            masculine,
+            feminine
+        }
+        
         try {
+            
             const { name, email, password, gender, birthDate, lastName } = userSchema.parse(req.body)
 
             const userExists = await userReposity.findOneBy({ email })
 
             if (userExists) {
 
-                return res.status(400).render('createUser', { msg: 'Esse email já existe' })
+                return res.status(400).render('createUser', { msg: 'Esse email já existe', userReq })
             }
 
             const hashPassword = await bcrypt.hash(password, 10)
@@ -53,7 +70,7 @@ export class UserController {
 
             try {
 
-                const token = await jwt.sign({ id: newUser.id }, secret ?? '', { expiresIn: '8h' })
+                const token = await jwt.sign({ id: newUser.id }, secret ?? '', { expiresIn: '3h' })
 
                 res.cookie('token', token)
                 return res.status(201).redirect('/post')
@@ -66,46 +83,47 @@ export class UserController {
         } catch (error: any) {
             const messageError = error.errors[0].message
 
-            return res.render('createUser', { msg: messageError })
+            return res.render('createUser', { msg: messageError, userReq })
 
         }
-
-
-
     }
 
     static getLogin(req: Request, res: Response) {
-        return res.status(200).json('Page Login')
+        return res.status(200).render('loginUser')
     }
 
     static async login(req: Request, res: Response) {
 
-        const { email, password } = req.body
+
+        const userSchema = z.object({
+            email: z.string().email(),
+            password: z.string()
+        })
+
+        const { email, password } = userSchema.parse(req.body)
 
         if (!email || !password) {
 
-            return res.status(400).json('Fill all Fields')
-
-        } else if (!email.includes('@')) {
-
-            return res.status(400).json('Invalid Email')
+            return res.status(200).render('loginUser', { email })
         }
 
         const user = await userReposity.findOneBy({ email })
 
         if (!user) {
-            return res.status(400).json('User or Password Invalids')
+            return res.status(400).render('loginUser', { msg: 'Usuário ou senha inválidos', email })
         }
 
         const checkPassword = await bcrypt.compare(password, user.password)
 
         if (!checkPassword) {
-            return res.status(400).json('User or Password Invalids')
+            return res.status(400).render('loginUser', { msg: 'Usuário ou senha inválidos', email })
         }
 
-        const token = await jwt.sign({ id: user.id }, secret ?? '', { expiresIn: '8h' })
+        const token = await jwt.sign({ id: user.id }, secret ?? '', { expiresIn: '3h' })
 
-        return res.status(200).json({ msg: 'Logged', token })
+        res.cookie('token', token)
+
+        return res.status(200).redirect('/post')
 
     }
 }

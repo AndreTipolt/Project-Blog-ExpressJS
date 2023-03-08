@@ -10,7 +10,7 @@
     <meta name="keywords" content="Colorlib Templates">
     <link rel="stylesheet" href="/css/style.css">
     <!-- Title Page-->
-    <title>Cadastrate</title>
+    <title>Cadastro</title>
 
     <!-- Icons font CSS-->
     <link href="/vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
@@ -37,9 +37,9 @@
                     <form method="POST" action="/user/create">
                         {{#if msg }}
 
-                            <div class="message-danger" >
-                                {{ msg }}
-                            </div>
+                        <div class="message-danger">
+                            {{ msg }}
+                        </div>
 
                         {{/if}}
 
@@ -47,13 +47,13 @@
                             <div class="col-2">
                                 <div class="input-group">
                                     <label class="label">Nome</label>
-                                    <input class="input--style-4" type="text" name="name">
+                                    <input class="input--style-4" type="text" name="name" value="{{ userReq.name }}">
                                 </div>
                             </div>
                             <div class="col-2">
                                 <div class="input-group">
                                     <label class="label">Sobrenome</label>
-                                    <input class="input--style-4" type="text" name="lastName">
+                                    <input class="input--style-4" type="text" name="lastName" value="{{ userReq.lastName }}">
                                 </div>
                             </div>
                         </div>
@@ -62,7 +62,8 @@
                                 <div class="input-group">
                                     <label class="label">Data de Nascimento</label>
                                     <div class="input-group-icon">
-                                        <input class="input--style-4 js-datepicker" type="date" name="birthDate">
+                                        <input class="input--style-4 js-datepicker" type="date" name="birthDate"
+                                            value="{{ userReq.birthDate }}">
                                         <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
                                     </div>
                                 </div>
@@ -72,12 +73,23 @@
                                     <label class="label">Gênero</label>
                                     <div class="p-t-10">
                                         <label class="radio-container m-r-45">Masculino
+                                            {{#if userReq.masculine}}
                                             <input type="radio" checked="checked" name="gender" value="m">
                                             <span class="checkmark"></span>
+                                            {{ else }}
+                                            <input type="radio" name="gender" value="m">
+                                            <span class="checkmark"></span>
+                                            {{/if}}
                                         </label>
-                                        <label class="radio-container">Feminino
+
+                                        <label class="radio-container m-r-45">Feminino
+                                            {{#if userReq.feminine}}
+                                            <input type="radio" checked="checked" name="gender" value="f">
+                                            <span class="checkmark"></span>
+                                            {{ else }}
                                             <input type="radio" name="gender" value="f">
                                             <span class="checkmark"></span>
+                                            {{/if}}
                                         </label>
                                     </div>
                                 </div>
@@ -87,7 +99,7 @@
                             <div class="col-2">
                                 <div class="input-group">
                                     <label class="label">Email</label>
-                                    <input class="input--style-4" type="email" name="email">
+                                    <input class="input--style-4" type="email" name="email" value="{{ userReq.email }}">
                                 </div>
                             </div>
                             <div class="col-2">

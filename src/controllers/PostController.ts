@@ -14,7 +14,7 @@ export class PostController {
 
 
 
-        return res.status(200).json(posts)
+        return res.status(200).render('home', { posts })
     }
 
     static async create(req: Request, res: Response) {
