@@ -8,6 +8,7 @@ const routes = express.Router()
 routes.use(checkAuth)
 
 routes.get('/', PostController.home)
+routes.get('/create', PostController.getCreate)
 routes.post('/create', PostController.create)
 
 
