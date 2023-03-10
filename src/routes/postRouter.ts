@@ -10,6 +10,7 @@ routes.use(checkAuth)
 routes.get('/', PostController.home)
 routes.get('/create', PostController.getCreate)
 routes.post('/create', PostController.create)
+routes.get('/:id', PostController.viewPost)
 
 
 

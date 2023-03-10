@@ -25,7 +25,7 @@ export class PostController {
                     const diff = currentDate.getTime() - post.date.getTime()
                     const baseDiffHour = diff / 1000 / 60 / 60
 
-                    const diffDates = controllerDate(baseDiffHour)
+                    const diffDates = convertDate(baseDiffHour)
 
                     return { post, diffDates }
                 })
@@ -41,7 +41,7 @@ export class PostController {
                 const diff = currentDate.getTime() - post.date.getTime()
                 const baseDiffHour = diff / 1000 / 60 / 60
 
-                const diffDates = controllerDate(baseDiffHour)
+                const diffDates = convertDate(baseDiffHour)
 
                 return { post, diffDates }
 
@@ -82,9 +82,23 @@ export class PostController {
 
     }
 
+    static async viewPost(req: Request, res: Response){
+        const id = req.params.id
+
+        if(!id){
+            return res.status(400).redirect('/post')
+        }
+        const post = await postRepository.findOne({ where: { id: Number(id) }, relations: { user: true } })
+
+        if(!post){
+            return res.status(400).redirect('/post')
+        }
+
+        return res.status(200).render('viewPost', { post })
+    }
 }
 
-function controllerDate(baseDiffHour: number) {
+function convertDate(baseDiffHour: number) {
     let diffDates
     if (baseDiffHour < 1) { // Minutes
 
