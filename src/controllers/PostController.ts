@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { postRepository } from "../repositories/PostRepository";
 import { date, z } from 'zod'
 import { Like } from 'typeorm'
+import { commentRepository } from "../repositories/CommentRepository";
+import { CommentController } from "./CommentController";
+import { transformeDate } from "../middlewares/transformeDate";
 
 export class PostController {
 
@@ -10,8 +13,6 @@ export class PostController {
     }
 
     static async home(req: Request, res: Response) {
-
-        const currentDate = new Date()
 
         const search = req.query.search as string
 
@@ -22,12 +23,10 @@ export class PostController {
                 .map((post) => {
 
                     post.user.password = ''
-                    const diff = currentDate.getTime() - post.date.getTime()
-                    const baseDiffHour = diff / 1000 / 60 / 60
 
-                    const diffDates = convertDate(baseDiffHour)
+                    const datePost = transformeDate(post.date)
 
-                    return { post, diffDates }
+                    return { post, diffDates: datePost }
                 })
 
             return res.status(200).render('home', { posts: postSearch })
@@ -38,12 +37,9 @@ export class PostController {
 
                 post.user.password = ''
 
-                const diff = currentDate.getTime() - post.date.getTime()
-                const baseDiffHour = diff / 1000 / 60 / 60
+                const datePost = transformeDate(post.date)
 
-                const diffDates = convertDate(baseDiffHour)
-
-                return { post, diffDates }
+                return { post, diffDates: datePost }
 
             })
 
@@ -82,54 +78,22 @@ export class PostController {
 
     }
 
-    static async viewPost(req: Request, res: Response){
-        const id = req.params.id
+    static async viewPost(req: Request, res: Response) {
+        const idPost = req.params.id
 
-        if(!id){
+        if (!idPost) {
             return res.status(400).redirect('/post')
         }
-        const post = await postRepository.findOne({ where: { id: Number(id) }, relations: { user: true } })
+        const post = await postRepository.findOne({ where: { id: Number(idPost) }, relations: { user: true } })
 
-        if(!post){
+        if (!post) {
             return res.status(400).redirect('/post')
         }
 
-        return res.status(200).render('viewPost', { post })
+        const datePost = transformeDate(post.date)
+
+        const comments = await CommentController.showComments(Number(idPost))
+        
+        return res.status(200).render('viewPost', { post, diffDates: datePost, comments })
     }
-}
-
-function convertDate(baseDiffHour: number) {
-    let diffDates
-    if (baseDiffHour < 1) { // Minutes
-
-        const minutes = baseDiffHour * 60
-
-        if (minutes < 1) {
-
-            diffDates = 'Agora Mesmo'
-
-        } else {
-
-            diffDates = `há ${minutes.toFixed(0)} Minutos`
-        }
-
-    } else if (baseDiffHour > 24) { // Days
-
-        const days = baseDiffHour / 24
-
-        if (days >= 7) { // Weeks
-
-            const weeks = days / 7
-            diffDates = `há ${weeks.toFixed(0)} Semanas`
-
-        } else {
-
-            diffDates = `há ${days.toFixed(0)} Dias`
-        }
-
-    }
-    else { // Hours
-        diffDates = `há ${baseDiffHour.toFixed(0)} Horas`
-    }
-    return diffDates
 }

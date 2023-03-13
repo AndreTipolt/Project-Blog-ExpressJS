@@ -81,11 +81,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 0.8em;
 }
 
 .form-main{
     position: relative;
-    top: 70px;
     width: 700px;
     text-align: center;
     display: flex;
@@ -93,9 +93,8 @@
 }
 
 .input-form-post{
-    border-radius: 5px;
+    border-radius: 11px;
     width: 50%;
-    padding-top: 4px;
     margin-left: 5px;
 }
 

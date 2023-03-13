@@ -7,7 +7,5 @@ const routes = express.Router()
 routes.use(checkAuth)
 
 routes.post('/:post_id', CommentController.create)
-routes.get('/:post_id', CommentController.showComments)
-
 
 export default routes

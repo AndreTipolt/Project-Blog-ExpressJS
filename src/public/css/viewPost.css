@@ -1,0 +1,16 @@
+.comments{
+    border: 1px solid black;
+    position: relative;
+    top: 15px;
+    display: table-row;
+    text-align: left;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.comment{
+    position: relative;
+    border-bottom: 2px solid black;
+    padding: 5px 0 5px 5px;
+    border-bottom: 0px;
+}
