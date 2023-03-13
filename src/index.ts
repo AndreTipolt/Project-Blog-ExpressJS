@@ -35,6 +35,10 @@ AppDataSource.initialize().then(() => {
 
     app.use('/comment', commentRouter)
 
+    app.get('/', (req, res) =>{
+      res.redirect('/post')
+    })
+
     app.listen(process.env.PORT)
 })
 
