@@ -105,7 +105,8 @@
 }
 
 .lbl-form{
-    margin-top: 14px;
+    margin-top: 10px;
+    font-size: 2.5em;
 }
 .message-danger{
     color: red;

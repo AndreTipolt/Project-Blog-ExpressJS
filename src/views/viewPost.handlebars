@@ -21,6 +21,7 @@
                     <ul>
                         <li><a href="/post">Home</a></li>
                         <li><a href="/post/create">Create</a></li>
+                        <li><a href="/exit">Sair</a></li>
                     </ul>
                 </div>
                 <div class="search">
@@ -35,19 +36,20 @@
             <div class="form-main">
                 <p class="display-5" style="top: 5px; position:relative">{{ post.title }}</p>
                 <div class="content">
-                    <p>{{ post.content }}</p> <br>
-                    <p>{{ post.user.name }} {{ diffDates }}.</p>
+                    <br>
+                    <p style="font-size: 1.6em;">{{ post.content }}</p> <br>
+                    <p><strong>{{ post.user.name }}</strong> {{ diffDates }}.</p>
                     <hr>
                 </div>
                 <form action="/comment/{{ post.id }}" method="post">
-                    <label for="">Comentar</label>
+                    <label for="" style="font-size: 1.4em;">Comentar</label>
                     <input type="text" name="content" placeholder="Comentar" class="input-form-post">
                 </form><br>
                 <p class="display-6" style="text-align: left;">Comentários</p>
                 <div class="comments">
                     {{#each comments }}
                         <div class="comment">
-                            {{ this.comment.user.name }} {{ this.diffHour }} <br>
+                            <strong>{{ this.comment.user.name }}</strong> • {{ this.diffHour }} <br>
 
                             {{ this.comment.content }}
                         </div>

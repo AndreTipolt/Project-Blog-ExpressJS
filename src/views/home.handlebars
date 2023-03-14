@@ -22,6 +22,7 @@
                     <ul>
                         <li><a href="/post">Home</a></li>
                         <li><a href="/post/create">Create</a></li>
+                        <li><a href="/exit">Sair</a></li>
                     </ul>
                 </div>
                 <form action="/post" method="get">
@@ -46,7 +47,7 @@
                         <p>{{ this.post.content }}</p>
                     </div>
                     <div class="publicate-post">
-                        {{ this.post.user.name }} {{ this.diffDates }}.
+                        <strong>{{ this.post.user.name }}</strong> {{ this.diffDates }}.
                     </div>
                 </div>
             </a>

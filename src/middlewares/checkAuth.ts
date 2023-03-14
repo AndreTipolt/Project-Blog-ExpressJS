@@ -11,7 +11,7 @@ export const checkAuth = async (req: Request, res: Response, next: NextFunction)
 
     const cokkies = req.get('cookie')?.split('; ')
 
-    const token = cokkies?.reduce((anterior: string, atual: string) => atual.includes('token') ? atual : anterior).substring(6)    
+    const token = cokkies?.reduce((anterior: string, atual: string) => atual.includes('token') ? atual : anterior).substring(6)
         
     if (!token) {
         

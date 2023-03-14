@@ -50,6 +50,7 @@
     position: relative;
     display: flex;
     align-items: center;
+    top: 50%;
     right: 10px;
 }
 

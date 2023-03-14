@@ -36,7 +36,13 @@ AppDataSource.initialize().then(() => {
     app.use('/comment', commentRouter)
 
     app.get('/', (req, res) =>{
-      res.redirect('/post')
+      return res.redirect('/post')
+    })
+
+    app.get('/exit', (req: Request, res: Response) =>{
+       
+      res.clearCookie('token')
+      return res.redirect('/user/login')
     })
 
     app.listen(process.env.PORT)
