@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { postRepository } from "../repositories/PostRepository";
 import { date, z } from 'zod'
-import { Like } from 'typeorm'
+import { LessThan, Like } from 'typeorm'
 import { commentRepository } from "../repositories/CommentRepository";
 import { CommentController } from "./CommentController";
 import { transformeDate } from "../middlewares/transformeDate";
@@ -32,7 +32,12 @@ export class PostController {
             return res.status(200).render('home', { posts: postSearch })
         }
 
-        const posts = (await postRepository.find({ relations: { user: true } }))
+        const posts = (await postRepository.find({
+            relations: { user: true },
+            order: {
+                date: { direction: 'DESC'}
+            }
+         }))
             .map((post) => {
 
                 post.user.password = ''
